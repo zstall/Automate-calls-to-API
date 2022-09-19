@@ -55,13 +55,13 @@ def log_call():
 
     return response
 
-def metric_call():
+def metric_call(metricName, tag1, tag2, tag3, tag4):
     randomNumber = round(random.random())
     body =  MetricPayload(
                 series=[
                     MetricSeries(
-                        tags=["env:denver"],
-                        metric="zstallTester.metric",
+                        tags=["env:" + tag1,"test:" + tag2,"help:" + tag3, "instanceId:" + tag4],
+                        metric='"'+metricName+'"',
                         type=MetricIntakeType(1),
                         points=[
                             MetricPoint(
@@ -84,6 +84,37 @@ def metric_call():
         api_instance = MetricsApi(api_client)
         response = api_instance.submit_metrics(body=body)
     return response
+
+def metric_no_tag_call(metricName):
+    randomNumber = round(random.random())
+    body =  MetricPayload(
+                series=[
+                    MetricSeries(
+                        tags=[],
+                        metric='"'+metricName+'"',
+                        type=MetricIntakeType(1),
+                        points=[
+                            MetricPoint(
+                                timestamp=int(datetime.now().timestamp()),
+                                value=randomNumber,
+                            ),
+                        ],
+                        resources=[
+                            MetricResource(
+                                name="dummy",
+                                type="unit"
+                            )
+                        ]
+                    ),
+                ],
+            )
+
+    configuration = Configuration()
+    with ApiClient(configuration) as api_client:
+        api_instance = MetricsApi(api_client)
+        response = api_instance.submit_metrics(body=body)
+    return response
+
 
 def main():
 
@@ -118,10 +149,13 @@ def main():
         print("Valid responses look like -> {'errors': []}")
         time.sleep(.8)
         
+        num = 0
+
         while (function_run_time * 60) > total_frequence:
             time.sleep(function_frequency)
             total_frequence += function_frequency
-            response = metric_call()
+            response = metric_call('zstall'+str(num//100)+'.metric','denver'+str(num//100), 'testing'+str(num//100), 'help'+str(num//100), 'instanctId-'+str(num//100))
+            num += 1
             print(response, "timestamp:", datetime.now().time())
 
     elif get_function_script == 3:
