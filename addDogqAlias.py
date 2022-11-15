@@ -1,4 +1,4 @@
-#!/usr/fing/bin/python3
+#!/usr/bin/python3
 import re
 import subprocess as sp
 
