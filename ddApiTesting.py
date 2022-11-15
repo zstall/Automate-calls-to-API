@@ -43,7 +43,9 @@ def log_call():
                 hostname="zstall-tester",
                 message="Hello world",
                 service="payment",
-                ddtags="env:test,location:denver",
+                ddtags="env:test,location:denver, time:start",
+		        request_time="5",
+                data="{labels {tester:testy}}"
             ),
         ]
     )
